@@ -1,9 +1,10 @@
 package com.javauserbackend;
 
+import com.javauserbackend.dto.UserRequest;
+import com.javauserbackend.dto.UserResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -14,41 +15,74 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    // Get all users
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public UserResponse createUser(UserRequest request) {
+
+        User user = new User();
+
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+
+        User savedUser = userRepository.save(user);
+
+        return new UserResponse(
+                savedUser.getId(),
+                savedUser.getUsername(),
+                savedUser.getEmail()
+        );
     }
 
-    // Get user by ID
-    public Optional<User> getUserById(Integer id) {
-        return userRepository.findById(id);
+    public List<UserResponse> getAllUsers() {
+
+        return userRepository.findAll()
+                .stream()
+                .map(user -> new UserResponse(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getEmail()
+                ))
+                .toList();
     }
 
-    // Create user
-    public User createUser(User user) {
-        return userRepository.save(user);
+    public UserResponse getUserById(Integer id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found with id: " + id)
+                );
+
+        return new UserResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail()
+        );
     }
 
-    // Update user
-    public Optional<User> updateUser(Integer id, User userDetails) {
+    public UserResponse updateUser(Integer id, UserRequest request) {
 
-        return userRepository.findById(id)
-                .map(user -> {
-                    user.setUsername(userDetails.getUsername());
-                    user.setEmail(userDetails.getEmail());
+        User user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found with id: " + id)
+                );
 
-                    return userRepository.save(user);
-                });
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+
+        User updatedUser = userRepository.save(user);
+
+        return new UserResponse(
+                updatedUser.getId(),
+                updatedUser.getUsername(),
+                updatedUser.getEmail()
+        );
     }
 
-    // Delete user
-    public boolean deleteUser(Integer id) {
+    public void deleteUser(Integer id) {
 
-        if (!userRepository.existsById(id)) {
-            return false;
-        }
+        User user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found with id: " + id)
+                );
 
-        userRepository.deleteById(id);
-        return true;
+        userRepository.delete(user);
     }
 }
