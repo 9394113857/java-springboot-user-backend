@@ -189,3 +189,18 @@ We want to see:
 java-user-backend.db
 
 
+Current flow:-
+1. Project setup                  ✅
+2. Maven + Spring Boot            ✅
+3. SQLite + Flyway                ✅
+4. User entity                    ✅
+5. User repository                ✅
+6. REST CRUD controller           ✅
+7. Validation + JSON errors       ← NEXT
+8. Service layer
+9. Final backend tests
+10. curl CRUD testing
+11. CI GitHub Action
+12. Docker image
+13. CD / deployment hook
+14. Render deployment
