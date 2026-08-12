@@ -1,13 +1,21 @@
 package com.javauserbackend;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserRepository userRepository;
@@ -16,26 +24,51 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    // GET /users
-    // Returns all users
+    // ============================================================
+    // GET ALL USERS
+    // ============================================================
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userRepository.findAll());
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
-    // GET /users/{id}
-    // Returns one user by ID
+    // ============================================================
+    // GET USER BY ID
+    // ============================================================
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Integer id) {
+    public User getUserById(@PathVariable Integer id) {
+
         return userRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "User not found with id: " + id
+                        )
+                );
     }
 
-    // POST /users
-    // Creates a new user
+    // ============================================================
+    // CREATE USER
+    // ============================================================
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
+
+        // Check duplicate username
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Username already exists"
+            );
+        }
+
+        // Check duplicate email
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Email already exists"
+            );
+        }
+
         User savedUser = userRepository.save(user);
 
         return ResponseEntity
@@ -43,36 +76,65 @@ public class UserController {
                 .body(savedUser);
     }
 
-    // PUT /users/{id}
-    // Updates an existing user
+    // ============================================================
+    // UPDATE USER
+    // ============================================================
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(
+    public User updateUser(
             @PathVariable Integer id,
             @RequestBody User userDetails) {
 
-        return userRepository.findById(id)
-                .map(user -> {
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "User not found with id: " + id
+                        )
+                );
 
-                    user.setUsername(userDetails.getUsername());
-                    user.setEmail(userDetails.getEmail());
+        // Check username belongs to another user
+        userRepository.findByUsername(userDetails.getUsername())
+                .ifPresent(user -> {
+                    if (!user.getId().equals(id)) {
+                        throw new ResponseStatusException(
+                                HttpStatus.CONFLICT,
+                                "Username already exists"
+                        );
+                    }
+                });
 
-                    User updatedUser = userRepository.save(user);
+        // Check email belongs to another user
+        userRepository.findByEmail(userDetails.getEmail())
+                .ifPresent(user -> {
+                    if (!user.getId().equals(id)) {
+                        throw new ResponseStatusException(
+                                HttpStatus.CONFLICT,
+                                "Email already exists"
+                        );
+                    }
+                });
 
-                    return ResponseEntity.ok(updatedUser);
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        existingUser.setUsername(userDetails.getUsername());
+        existingUser.setEmail(userDetails.getEmail());
+
+        return userRepository.save(existingUser);
     }
 
-    // DELETE /users/{id}
-    // Deletes an existing user
+    // ============================================================
+    // DELETE USER
+    // ============================================================
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
 
-        if (!userRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "User not found with id: " + id
+                        )
+                );
 
-        userRepository.deleteById(id);
+        userRepository.delete(existingUser);
 
         return ResponseEntity.noContent().build();
     }
