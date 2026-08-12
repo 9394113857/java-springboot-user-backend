@@ -204,3 +204,7 @@ Current flow:-
 12. Docker image
 13. CD / deployment hook
 14. Render deployment
+
+
+<!-- Build the code -->
+.\mvnw.cmd test
