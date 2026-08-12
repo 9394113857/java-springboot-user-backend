@@ -38,3 +38,17 @@ build/
 *.db-journal
 *.sqlite
 *.sqlite3
+
+# Node dependencies
+node_modules/
+
+# Supabase local files
+supabase/.temp/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Documentation
+/docs/
