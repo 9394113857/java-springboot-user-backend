@@ -1,33 +1,35 @@
--- Purpose
--- This file defines the database schema.
--- V1__create_users_table.sql
---         ↓
--- Flyway
---         ↓
--- SQLite
---         ↓
--- users table
-
--- Later, this migration history becomes the basis for applying the schema to Supabase.
-
 -- =========================================================
 -- V1: Create users table
 -- =========================================================
+-- Purpose:
+-- Creates the users table for the application.
+--
+-- Database:
+-- PostgreSQL / Supabase
+--
+-- Flyway:
+-- This migration is executed automatically on application startup.
+-- =========================================================
+
 
 CREATE TABLE users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id BIGSERIAL PRIMARY KEY,
     username VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE
 );
 
--- That's it for V1. Keep it simple.
--- Why these columns?
+
+-- =========================================================
+-- Column explanation
+-- =========================================================
 -- id
---     → unique user ID
-
+--     → Unique user ID
+--     → BIGSERIAL automatically generates sequential IDs
+--
 -- username
---     → user's username
-
+--     → User's username
+--
 -- email
---     → user's email
---     → UNIQUE prevents duplicate emails
+--     → User's email address
+--     → UNIQUE prevents duplicate email addresses
+-- =========================================================
