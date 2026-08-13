@@ -1,5 +1,5 @@
 -- =========================================================
--- V1: Create users table
+-- 🛫 V1: CREATE USERS TABLE
 -- =========================================================
 -- Purpose:
 -- Creates the users table for the application.
@@ -8,7 +8,7 @@
 -- PostgreSQL / Supabase
 --
 -- Flyway:
--- This migration is executed automatically on application startup.
+-- This migration is executed automatically by Flyway.
 -- =========================================================
 
 
@@ -20,7 +20,7 @@ CREATE TABLE users (
 
 
 -- =========================================================
--- Column explanation
+-- 📋 COLUMN EXPLANATION
 -- =========================================================
 -- id
 --     → Unique user ID
