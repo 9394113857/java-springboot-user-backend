@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -24,17 +26,22 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
+
     // ============================================================
     // GET ALL USERS
     // ============================================================
+
     @GetMapping
     public List<User> getAllUsers() {
+
         return userRepository.findAll();
     }
+
 
     // ============================================================
     // GET USER BY ID
     // ============================================================
+
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Integer id) {
 
@@ -47,14 +54,17 @@ public class UserController {
                 );
     }
 
+
     // ============================================================
     // CREATE USER
     // ============================================================
+
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
 
         // Check duplicate username
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "Username already exists"
@@ -63,6 +73,7 @@ public class UserController {
 
         // Check duplicate email
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "Email already exists"
@@ -76,9 +87,11 @@ public class UserController {
                 .body(savedUser);
     }
 
+
     // ============================================================
     // UPDATE USER
     // ============================================================
+
     @PutMapping("/{id}")
     public User updateUser(
             @PathVariable Integer id,
@@ -92,10 +105,13 @@ public class UserController {
                         )
                 );
 
+
         // Check username belongs to another user
         userRepository.findByUsername(userDetails.getUsername())
                 .ifPresent(user -> {
+
                     if (!user.getId().equals(id)) {
+
                         throw new ResponseStatusException(
                                 HttpStatus.CONFLICT,
                                 "Username already exists"
@@ -103,10 +119,13 @@ public class UserController {
                     }
                 });
 
+
         // Check email belongs to another user
         userRepository.findByEmail(userDetails.getEmail())
                 .ifPresent(user -> {
+
                     if (!user.getId().equals(id)) {
+
                         throw new ResponseStatusException(
                                 HttpStatus.CONFLICT,
                                 "Email already exists"
@@ -114,15 +133,18 @@ public class UserController {
                     }
                 });
 
+
         existingUser.setUsername(userDetails.getUsername());
         existingUser.setEmail(userDetails.getEmail());
 
         return userRepository.save(existingUser);
     }
 
+
     // ============================================================
     // DELETE USER
     // ============================================================
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
 
@@ -138,4 +160,5 @@ public class UserController {
 
         return ResponseEntity.noContent().build();
     }
+
 }
