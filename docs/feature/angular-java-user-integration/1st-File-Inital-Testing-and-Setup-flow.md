@@ -413,3 +413,8 @@ Spring Boot                ✅
 Your CRUD backend testing is basically complete. 🚀
 
 The next useful step is to test the edge cases: missing username/email, invalid JSON, empty values, updating a nonexistent user, and deleting a nonexistent user.
+
+.\mvnw.cmd test
+
+.\mvnw.cmd spring-boot:run
+
