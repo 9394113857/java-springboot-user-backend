@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://angular-code.vercel.app")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
