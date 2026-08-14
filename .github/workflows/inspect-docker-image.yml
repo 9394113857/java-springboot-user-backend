@@ -4,60 +4,130 @@ on:
   workflow_dispatch:
 
 jobs:
+
+  # ============================================================
+  # INSPECT LATEST DOCKER IMAGE
+  # ============================================================
+
   inspect-image:
+
     runs-on: ubuntu-latest
 
     steps:
 
-      # ============================================================
+      # ========================================================
       # 1. Pull latest Docker image
-      # ============================================================
+      # ========================================================
 
       - name: 🐳 Pull latest Docker image
         run: |
+          echo "=============================================="
+          echo "🐳 PULLING LATEST DOCKER IMAGE"
+          echo "=============================================="
+
           docker pull pythoncodelife/java-springboot-user-backend:latest
 
 
-      # ============================================================
-      # 2. Inspect Docker image
-      # ============================================================
+      # ========================================================
+      # 2. Display Docker image information
+      # ========================================================
 
       - name: 🔎 Inspect Docker image
         run: |
-          docker image inspect \
+          echo ""
+          echo "=============================================="
+          echo "🔎 DOCKER IMAGE INSPECTION"
+          echo "=============================================="
+
+          echo ""
+          echo "===== IMAGE ID ====="
+          docker inspect \
             pythoncodelife/java-springboot-user-backend:latest \
-            --format='
-          Image ID:
-          {{.Id}}
+            --format='{{.Id}}'
 
-          Created:
-          {{.Created}}
+          echo ""
+          echo "===== CREATED ====="
+          docker inspect \
+            pythoncodelife/java-springboot-user-backend:latest \
+            --format='{{.Created}}'
 
-          Entrypoint:
-          {{json .Config.Entrypoint}}
+          echo ""
+          echo "===== ENTRYPOINT ====="
+          docker inspect \
+            pythoncodelife/java-springboot-user-backend:latest \
+            --format='{{json .Config.Entrypoint}}'
 
-          CMD:
-          {{json .Config.Cmd}}
+          echo ""
+          echo "===== CMD ====="
+          docker inspect \
+            pythoncodelife/java-springboot-user-backend:latest \
+            --format='{{json .Config.Cmd}}'
 
-          Exposed Ports:
-          {{json .Config.ExposedPorts}}
+          echo ""
+          echo "===== EXPOSED PORTS ====="
+          docker inspect \
+            pythoncodelife/java-springboot-user-backend:latest \
+            --format='{{json .Config.ExposedPorts}}'
 
-          Working Directory:
-          {{.Config.WorkingDir}}
+          echo ""
+          echo "===== WORKING DIRECTORY ====="
+          docker inspect \
+            pythoncodelife/java-springboot-user-backend:latest \
+            --format='{{.Config.WorkingDir}}'
 
-          Architecture:
-          {{.Architecture}}
+          echo ""
+          echo "===== ARCHITECTURE ====="
+          docker inspect \
+            pythoncodelife/java-springboot-user-backend:latest \
+            --format='{{.Architecture}}'
 
-          OS:
-          {{.Os}}
-          '
+          echo ""
+          echo "===== OS ====="
+          docker inspect \
+            pythoncodelife/java-springboot-user-backend:latest \
+            --format='{{.Os}}'
+
+          echo ""
+          echo "=============================================="
+          echo "🔎 INSPECTION COMPLETE"
+          echo "=============================================="
 
 
-      # ============================================================
-      # 3. Show image history
-      # ============================================================
+      # ========================================================
+      # 3. Display Docker image history
+      # ========================================================
 
       - name: 📜 Show Docker image history
         run: |
+          echo ""
+          echo "=============================================="
+          echo "📜 DOCKER IMAGE HISTORY"
+          echo "=============================================="
+
           docker history \
             pythoncodelife/java-springboot-user-backend:latest
+
+          echo ""
+          echo "=============================================="
+          echo "📜 HISTORY COMPLETE"
+          echo "=============================================="
+
+
+      # ========================================================
+      # 4. Display complete Docker configuration
+      # ========================================================
+
+      - name: 🧩 Show complete Docker configuration
+        run: |
+          echo ""
+          echo "=============================================="
+          echo "🧩 COMPLETE DOCKER CONFIGURATION"
+          echo "=============================================="
+
+          docker inspect \
+            pythoncodelife/java-springboot-user-backend:latest
+
+          echo ""
+          echo "=============================================="
+          echo "🧩 CONFIGURATION COMPLETE"
+          echo "=============================================="
