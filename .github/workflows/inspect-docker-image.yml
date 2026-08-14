@@ -1,0 +1,63 @@
+name: 🔍 Inspect Latest Docker Image
+
+on:
+  workflow_dispatch:
+
+jobs:
+  inspect-image:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # ============================================================
+      # 1. Pull latest Docker image
+      # ============================================================
+
+      - name: 🐳 Pull latest Docker image
+        run: |
+          docker pull pythoncodelife/java-springboot-user-backend:latest
+
+
+      # ============================================================
+      # 2. Inspect Docker image
+      # ============================================================
+
+      - name: 🔎 Inspect Docker image
+        run: |
+          docker image inspect \
+            pythoncodelife/java-springboot-user-backend:latest \
+            --format='
+          Image ID:
+          {{.Id}}
+
+          Created:
+          {{.Created}}
+
+          Entrypoint:
+          {{json .Config.Entrypoint}}
+
+          CMD:
+          {{json .Config.Cmd}}
+
+          Exposed Ports:
+          {{json .Config.ExposedPorts}}
+
+          Working Directory:
+          {{.Config.WorkingDir}}
+
+          Architecture:
+          {{.Architecture}}
+
+          OS:
+          {{.Os}}
+          '
+
+
+      # ============================================================
+      # 3. Show image history
+      # ============================================================
+
+      - name: 📜 Show Docker image history
+        run: |
+          docker history \
+            pythoncodelife/java-springboot-user-backend:latest
